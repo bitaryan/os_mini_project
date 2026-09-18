@@ -1,0 +1,17 @@
+node_modules
+dist
+.next
+coverage
+pnpm-lock.yaml
+next-env.d.ts
+# Preserve the approved input specifications.
+AGENTS.MD
+ARCHITECTURE.MD
+DESIGN.MD
+SKILLS.MD
+docs/API_AND_EVENTS.md
+docs/DEPLOYMENT_AND_SETUP.md
+docs/IMPLEMENTATION_ROADMAP.md
+docs/PRD.md
+docs/TECH_STACK.md
+docs/TEST_CASES.md
