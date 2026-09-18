@@ -15,9 +15,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "pnpm --filter @printer/contracts build && vitest run",
+    "test:integration": "pnpm --filter @printer/contracts build && vitest run apps/api/tests/health.test.ts",
+    "test:e2e": "playwright test",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
+    "@printer/contracts": "workspace:*",
     "@eslint/js": "^9.39.5",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",

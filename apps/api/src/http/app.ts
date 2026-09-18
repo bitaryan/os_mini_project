@@ -54,16 +54,14 @@ export function createApp(
       standardHeaders: 'draft-8',
       legacyHeaders: false,
       handler: (_request, response) => {
-        response
-          .status(429)
-          .json({
-            error: {
-              code: 'RATE_LIMITED',
-              message: 'Too many health checks. Try again shortly.',
-              retryable: true,
-            },
-            meta: response.locals['meta'],
-          } satisfies ApiErrorResponse);
+        response.status(429).json({
+          error: {
+            code: 'RATE_LIMITED',
+            message: 'Too many health checks. Try again shortly.',
+            retryable: true,
+          },
+          meta: response.locals['meta'],
+        } satisfies ApiErrorResponse);
       },
     }),
   );
@@ -90,16 +88,14 @@ export function createApp(
     } satisfies HealthReady);
   });
   app.use((_request, response) => {
-    response
-      .status(404)
-      .json({
-        error: {
-          code: 'NOT_FOUND',
-          message: 'This endpoint is not available.',
-          retryable: false,
-        },
-        meta: response.locals['meta'],
-      } satisfies ApiErrorResponse);
+    response.status(404).json({
+      error: {
+        code: 'NOT_FOUND',
+        message: 'This endpoint is not available.',
+        retryable: false,
+      },
+      meta: response.locals['meta'],
+    } satisfies ApiErrorResponse);
   });
   return app;
 }
