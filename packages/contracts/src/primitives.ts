@@ -76,4 +76,5 @@ export const errorCodeSchema = z.enum([
 export type JobStatus = z.infer<typeof jobStatusSchema>;
 export type PrinterStatus = z.infer<typeof printerStatusSchema>;
 export type SchedulingAlgorithm = z.infer<typeof schedulingAlgorithmSchema>;
+export type SpeedMultiplier = z.infer<typeof speedMultiplierSchema>;
 export type ErrorCode = z.infer<typeof errorCodeSchema>;
