@@ -65,11 +65,12 @@ export default async function DashboardPage() {
               <p className="eyebrow">SMART PRINTER QUEUE</p>
               <h1>System overview</h1>
               <p className="description">
-                The foundation for an observable operating systems simulation.
+                The deterministic core of an observable operating systems
+                simulation.
               </p>
             </div>
             <span className="phase-badge">
-              Week 01 <span aria-hidden="true">/</span> Foundation
+              Week 02 <span aria-hidden="true">/</span> Domain engine
             </span>
           </div>
 
@@ -110,14 +111,14 @@ export default async function DashboardPage() {
                   {ready
                     ? 'Ready to accept traffic'
                     : connected
-                      ? 'Foundation is online'
+                      ? 'Domain engine is proven'
                       : 'Waiting for the API'}
                 </h3>
                 <p>
                   {ready
                     ? 'All required service checks passed.'
                     : connected
-                      ? 'Simulation services are scheduled for the next implementation phases.'
+                      ? 'Scheduling is ready; persistence and coordination arrive in the next phases.'
                       : 'Readiness will appear here when the connection is restored.'}
                 </p>
               </div>
@@ -195,11 +196,11 @@ export default async function DashboardPage() {
 
           <section className="next-phase" aria-labelledby="next-title">
             <div>
-              <p className="eyebrow">NEXT IN THE ROADMAP · WEEK 02</p>
-              <h2 id="next-title">Make scheduling deterministic.</h2>
+              <p className="eyebrow">NEXT IN THE ROADMAP · WEEK 03</p>
+              <h2 id="next-title">Coordinate shared resources.</h2>
               <p>
-                FCFS, Shortest Job First, Priority with Dynamic Aging, and the
-                simulation clock.
+                Fair mutexes, a bounded queue, printer leases, workers, and
+                invariant checks.
               </p>
             </div>
             <span className="next-arrow" aria-hidden="true">

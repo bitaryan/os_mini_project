@@ -2,7 +2,7 @@
 
 A browser-based Operating Systems simulation. The approved stack is Next.js, Express, and a TypeScript domain engine. Print jobs contain metadata only; this project does not operate physical printers.
 
-Week 1 implements the workspace, v1 contracts, deterministic reference workloads, environment validation, health endpoints, minimal web shell, and CI. Scheduling begins in Week 2. See the [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md) and [contract coverage](docs/WEEK_1_CONTRACTS.md).
+Weeks 1–2 implement the workspace, v1 contracts, deterministic reference workloads, environment validation, health endpoints, minimal web shell, CI, lifecycle rules, the simulation clock, FCFS, SJF, Priority with Dynamic Aging, scheduler explanations, and pure timing metrics. Synchronization begins in Week 3. See the [implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md) and [contract coverage](docs/WEEK_1_CONTRACTS.md).
 
 ## Local setup
 
@@ -27,14 +27,14 @@ pnpm dev
 
 Open **http://localhost:3000**. The API listens on **http://localhost:4000**. Root `.env` is loaded by the API; Next.js loads `apps/web/.env.local`. Both processes fail fast on invalid configuration and report field names without secret values. Local environment files are ignored by Git.
 
-The local authentication setting and database URL are validated configuration for future phases. Authentication, database access, migrations, job commands, and Socket.IO delivery are not implemented in Week 1. No database setup is required yet.
+The local authentication setting and database URL are validated configuration for future phases. Authentication, database access, migrations, job commands, synchronization, workers, and Socket.IO delivery are not implemented yet. No database setup is required.
 
-| Endpoint            | Week 1 behavior                                                             |
-| ------------------- | --------------------------------------------------------------------------- |
-| `GET /health/live`  | `200`, typed process liveness                                               |
-| `GET /health/ready` | `503`, configuration ready; domain/persistence components `not_implemented` |
-| `/dashboard`        | Real API connectivity, component readiness, environment label               |
-| Other API routes    | Typed `404 NOT_FOUND`                                                       |
+| Endpoint            | Week 1 behavior                                                                                |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| `GET /health/live`  | `200`, typed process liveness                                                                  |
+| `GET /health/ready` | `503`, configuration and scheduler ready; persistence/coordinator components `not_implemented` |
+| `/dashboard`        | Real API connectivity, component readiness, environment label                                  |
+| Other API routes    | Typed `404 NOT_FOUND`                                                                          |
 
 The shell distinguishes a reachable API with incomplete services from a disconnected or invalid API response. **Check again** reloads readiness; live subscriptions arrive in Week 5.
 
@@ -63,12 +63,12 @@ pnpm --filter @printer/api start
 pnpm --filter @printer/web start
 ```
 
-This is a Week 1 service smoke check, not a production simulation release. Docker, persistence, identity integration, and complete lifecycle demonstrations stay in their assigned roadmap phases. The original [deployment guide](docs/DEPLOYMENT_AND_SETUP.md) describes that later target; commands for migrations and seed data are not available yet.
+This is a foundation and pure-domain smoke check, not a production simulation release. Docker, persistence, identity integration, synchronization, and complete lifecycle demonstrations stay in their assigned roadmap phases. The original [deployment guide](docs/DEPLOYMENT_AND_SETUP.md) describes that later target; commands for migrations and seed data are not available yet.
 
 ## Repository
 
 - `apps/web`: App Router shell and validated API health reader.
-- `apps/api`: Express health service and validated environment.
+- `apps/api`: Express health service, validated environment, and pure deterministic domain engine.
 - `packages/contracts`: framework-independent Zod schemas and inferred types.
 - `packages/config`: shared strict TypeScript and lint configuration.
 - `packages/test-fixtures`: hand-calculated reference workloads and metric checks.

@@ -58,6 +58,7 @@ export const healthLiveSchema = z.object({
 });
 export const readinessComponentsSchema = z.object({
   configuration: z.enum(['ready', 'unavailable']),
+  scheduler: z.enum(['ready', 'unavailable']),
   database: z.enum(['ready', 'unavailable', 'not_implemented']),
   migrations: z.enum(['ready', 'unavailable', 'not_implemented']),
   coordinator: z.enum(['ready', 'unavailable', 'not_implemented']),

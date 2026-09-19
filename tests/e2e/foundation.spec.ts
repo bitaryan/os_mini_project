@@ -21,6 +21,8 @@ test('built web and API agree on readiness, support keyboard access and fit the 
   );
   await expect(page.getByRole('status')).toContainText('API connected');
   await expect(page.getByText('Not built yet', { exact: true })).toHaveCount(4);
+  await expect(page.getByText('scheduler', { exact: true })).toBeVisible();
+  await expect(page.getByText('Domain engine is proven')).toBeVisible();
   await page.keyboard.press('Tab');
   await expect(
     page.getByRole('link', { name: 'Skip to content' }),

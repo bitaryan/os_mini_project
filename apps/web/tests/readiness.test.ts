@@ -8,6 +8,7 @@ const health = {
   version: '0.1.0',
   components: {
     configuration: 'ready',
+    scheduler: 'ready',
     database: 'not_implemented',
     migrations: 'not_implemented',
     coordinator: 'not_implemented',
@@ -34,6 +35,7 @@ test('recognizes ready only when the payload and HTTP status agree', async () =>
     status: 'ready',
     components: {
       configuration: 'ready',
+      scheduler: 'ready',
       database: 'ready',
       migrations: 'ready',
       coordinator: 'ready',

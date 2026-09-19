@@ -305,6 +305,7 @@ describe('resources and transport', () => {
       version: '0.1.0',
       components: {
         configuration: 'ready',
+        scheduler: 'ready',
         database: 'not_implemented',
         migrations: 'not_implemented',
         coordinator: 'not_implemented',
