@@ -23,6 +23,8 @@ export class SimulationClock {
   } = {}) {
     assertTime(realTimeMs);
     assertTime(simulationTimeMs);
+    if (!speeds.has(speedMultiplier))
+      throw new RangeError('Unsupported speed multiplier.');
     this.#lastRealTimeMs = realTimeMs;
     this.#simulationTimeMs = simulationTimeMs;
     this.#speedMultiplier = speedMultiplier;
@@ -66,6 +68,10 @@ export class SimulationClock {
 
   resume(realTimeMs = this.#lastRealTimeMs): SimulationClockState {
     assertTime(realTimeMs);
+    if (!this.#paused) {
+      this.tick(realTimeMs);
+      return this.state;
+    }
     if (realTimeMs > this.#lastRealTimeMs) this.#lastRealTimeMs = realTimeMs;
     this.#paused = false;
     return this.state;

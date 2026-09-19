@@ -176,7 +176,7 @@ function byArrival(left: PrintJob, right: PrintJob): number {
   return (
     left.queuedAtMs - right.queuedAtMs ||
     left.sequence - right.sequence ||
-    left.id.localeCompare(right.id)
+    (left.id < right.id ? -1 : left.id > right.id ? 1 : 0)
   );
 }
 

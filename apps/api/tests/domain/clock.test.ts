@@ -25,6 +25,17 @@ describe('simulation clock', () => {
     expect(clock.advanceBy(3)).toBe(1);
   });
 
+  test('does not discard elapsed time when resume is repeated while running', () => {
+    const clock = new SimulationClock();
+    expect(clock.resume(1_000).simulationTimeMs).toBe(1_000);
+  });
+
+  test('validates speed at the runtime boundary', () => {
+    expect(() => new SimulationClock({ speedMultiplier: 3 as 1 })).toThrow(
+      RangeError,
+    );
+  });
+
   test.each([-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])(
     'rejects invalid time %s',
     (time) => {

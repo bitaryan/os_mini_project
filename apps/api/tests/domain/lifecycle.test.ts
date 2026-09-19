@@ -25,6 +25,29 @@ const readyJob = (): PrintJob => ({
 });
 
 describe('job lifecycle', () => {
+  test('defines the complete legal transition table', () => {
+    const expected = {
+      QUEUED: ['READY', 'CANCELLED'],
+      READY: ['PRINTING', 'BLOCKED', 'CANCELLED', 'FAILED'],
+      PRINTING: ['PAUSED', 'COMPLETED', 'CANCELLED', 'FAILED'],
+      PAUSED: ['PRINTING', 'READY', 'CANCELLED', 'FAILED'],
+      BLOCKED: ['READY', 'CANCELLED'],
+      COMPLETED: [],
+      CANCELLED: [],
+      FAILED: [],
+    } as const;
+    for (const [from, allowed] of Object.entries(expected)) {
+      for (const to of Object.keys(expected)) {
+        expect(
+          canTransition(
+            from as keyof typeof expected,
+            to as keyof typeof expected,
+          ),
+        ).toBe(allowed.includes(to as never));
+      }
+    }
+  });
+
   test('returns a new job for a legal transition and leaves the source unchanged', () => {
     const source = readyJob();
     const printing = transitionJob(source, 'PRINTING', {
@@ -66,7 +89,12 @@ describe('job lifecycle', () => {
 
   test.each([
     { pages: 0 },
+    { pages: 10_001 },
     { pagesCompleted: 3 },
+    { pages: 2, pagesCompleted: 2 },
+    { basePriority: -1 },
+    { basePriority: 101 },
+    { documentName: ' ' },
     { queuedAtMs: -1 },
     { startedAtMs: -1 },
     { status: 'PRINTING' as const },

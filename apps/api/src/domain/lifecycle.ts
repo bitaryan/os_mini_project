@@ -7,7 +7,7 @@ const transitions = {
   READY: ['PRINTING', 'BLOCKED', 'CANCELLED', 'FAILED'],
   PRINTING: ['PAUSED', 'COMPLETED', 'CANCELLED', 'FAILED'],
   PAUSED: ['PRINTING', 'READY', 'CANCELLED', 'FAILED'],
-  BLOCKED: ['READY', 'CANCELLED', 'FAILED'],
+  BLOCKED: ['READY', 'CANCELLED'],
   COMPLETED: [],
   CANCELLED: [],
   FAILED: [],
@@ -65,6 +65,17 @@ export function assertJobInvariants(job: PrintJob): void {
   if (job.pages < 1 || job.pagesCompleted > job.pages) {
     throw new Error('Completed pages must stay within the job page count.');
   }
+  if (job.pages > 10_000) throw new Error('A job cannot exceed 10,000 pages.');
+  if (
+    !Number.isSafeInteger(job.basePriority) ||
+    job.basePriority < 0 ||
+    job.basePriority > 100
+  ) {
+    throw new Error('Base priority must be an integer from 0 to 100.');
+  }
+  if (!job.id || !job.ownerId || !job.documentName.trim()) {
+    throw new Error('Job identity and document name are required.');
+  }
   if (job.queuedAtMs < job.submittedAtMs) {
     throw new Error('A job cannot enter the queue before submission.');
   }
@@ -85,6 +96,9 @@ export function assertJobInvariants(job: PrintJob): void {
   }
   if (isTerminalStatus(job.status) && job.assignedPrinterId !== undefined) {
     throw new Error('Terminal jobs cannot retain a printer assignment.');
+  }
+  if (!isTerminalStatus(job.status) && job.pagesCompleted === job.pages) {
+    throw new Error('A nonterminal job must have pages remaining.');
   }
   if (
     job.status === 'COMPLETED' &&
