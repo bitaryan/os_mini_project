@@ -60,6 +60,9 @@ importers:
         specifier: ^4.6.5
         version: 4.6.5
     devDependencies:
+      '@printer/test-fixtures':
+        specifier: workspace:*
+        version: link:../../packages/test-fixtures
       '@types/express':
         specifier: 5.0.6
         version: 5.0.6

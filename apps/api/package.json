@@ -18,6 +18,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@printer/test-fixtures": "workspace:*",
     "@types/express": "5.0.6",
     "@types/supertest": "7.2.1",
     "supertest": "7.2.2",
