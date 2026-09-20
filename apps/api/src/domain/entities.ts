@@ -35,6 +35,12 @@ export interface PrinterProfile {
   readonly supportsDuplex: boolean;
 }
 
+export interface PrinterState extends PrinterProfile {
+  readonly name: string;
+  readonly activeJobId?: string;
+  readonly version: number;
+}
+
 export interface DomainSchedulerConfig {
   readonly algorithm: SchedulingAlgorithm;
   readonly agingIntervalMs: number;

@@ -60,6 +60,12 @@ export class SimulationClock {
     return this.tick(this.#lastRealTimeMs + realElapsedMs);
   }
 
+  advanceSimulationBy(elapsedSimulationMs: number): number {
+    assertTime(elapsedSimulationMs);
+    if (!this.#paused) this.#simulationTimeMs += elapsedSimulationMs;
+    return this.#simulationTimeMs;
+  }
+
   pause(realTimeMs = this.#lastRealTimeMs): SimulationClockState {
     this.tick(realTimeMs);
     this.#paused = true;
@@ -85,6 +91,14 @@ export class SimulationClock {
       throw new RangeError('Unsupported speed multiplier.');
     this.tick(realTimeMs);
     this.#speedMultiplier = speedMultiplier;
+    return this.state;
+  }
+
+  reset(paused = true): SimulationClockState {
+    this.#simulationTimeMs = 0;
+    this.#lastRealTimeMs = 0;
+    this.#fractionalSimulationMs = 0;
+    this.#paused = paused;
     return this.state;
   }
 }
