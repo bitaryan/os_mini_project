@@ -51,6 +51,24 @@ export const createPrinterRequestSchema = z.strictObject({
   supportsDuplex: z.boolean(),
   initialStatus: z.enum(['READY', 'OFFLINE']).optional(),
 });
+export const updatePrinterRequestSchema = z
+  .strictObject({
+    name: z.string().trim().min(1).max(80).optional(),
+    pagesPerMinute: z.number().min(1).max(600).optional(),
+    supportsColor: z.boolean().optional(),
+    supportsDuplex: z.boolean().optional(),
+    online: z.boolean().optional(),
+    expectedPrinterVersion: nonNegativeIntSchema,
+  })
+  .refine(
+    (value) =>
+      value.name !== undefined ||
+      value.pagesPerMinute !== undefined ||
+      value.supportsColor !== undefined ||
+      value.supportsDuplex !== undefined ||
+      value.online !== undefined,
+    'At least one printer update is required.',
+  );
 export const injectPrinterFaultRequestSchema = z.strictObject({
   fault: z.enum(['PAPER_JAM', 'WORKER_STALL']),
   mode: z.enum(['IMMEDIATE', 'AFTER_CURRENT_PAGE']),
@@ -184,6 +202,7 @@ export const benchmarkRequestSchema = z.strictObject({
 export type CreateJobRequest = z.input<typeof createJobRequestSchema>;
 export type SubmitJobInput = z.infer<typeof submitJobSchema>;
 export type UpdateJobRequest = z.infer<typeof updateJobRequestSchema>;
+export type UpdatePrinterRequest = z.infer<typeof updatePrinterRequestSchema>;
 export type CreateBurstRequest = z.infer<typeof createBurstRequestSchema>;
 export type BenchmarkJob = z.infer<typeof benchmarkJobSchema>;
 export type BenchmarkRequest = z.infer<typeof benchmarkRequestSchema>;
