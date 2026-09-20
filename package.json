@@ -7,6 +7,12 @@
   "engines": {
     "node": "24.x"
   },
+  "pnpm": {
+    "overrides": {
+      "deepmerge-ts": "8.0.2",
+      "mysql2": "3.24.4"
+    }
+  },
   "scripts": {
     "dev": "pnpm --filter @printer/contracts build && pnpm --parallel --filter @printer/api --filter @printer/web dev",
     "build": "pnpm -r --if-present build",
@@ -15,7 +21,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "pnpm --filter @printer/contracts build && vitest run",
-    "test:integration": "pnpm --filter @printer/contracts build && vitest run apps/api/tests/health.test.ts",
+    "test:integration": "pnpm --filter @printer/contracts build && vitest run apps/api/tests/health.test.ts apps/api/tests/api.test.ts apps/api/tests/week5.test.ts",
     "test:e2e": "playwright test",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

@@ -12,4 +12,6 @@ test-results/
 *.db-*
 .DS_Store
 *.log
+apps/api/generated/
+apps/api/src/generated/
 .pnpm-store/

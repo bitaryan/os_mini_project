@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Simulation {
+  id               String            @id
+  status           String
+  simulationTimeMs Int
+  speedMultiplier  Float
+  queueCapacity    Int
+  stateVersion     Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  scheduler        SchedulerConfig?
+  jobs             Job[]
+  printers         Printer[]
+  events           DomainEvent[]
+  auditEntries     AuditEntry[]
+  idempotencyKeys  IdempotencyKey[]
+  snapshots        Snapshot[]
+  benchmarkRuns    BenchmarkRun[]
+  outboxEntries    OutboxEntry[]
+}
+
+model SchedulerConfig {
+  simulationId        String     @id
+  algorithm           String
+  agingIntervalMs     Int
+  agingFactor         Int
+  priorityCap         Int
+  starvationWarningMs Int
+  revision             Int
+  simulation          Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id                        String     @id
+  simulationId              String
+  ownerId                   String
+  documentName              String
+  pages                     Int
+  pagesCompleted            Int
+  basePriority              Int
+  colorMode                 String
+  duplex                    Boolean
+  status                    String
+  submittedAtMs             Int
+  queuedAtMs                Int
+  startedAtMs               Int?
+  completedAtMs             Int?
+  assignedPrinterId         String?
+  cancellationRequestedAtMs Int?
+  lastProgressAtMs          Int?
+  retryCount                Int
+  sequence                  Int
+  version                   Int
+  simulation                Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@index([simulationId, status, submittedAtMs])
+  @@unique([simulationId, sequence])
+}
+
+model Printer {
+  id             String     @id
+  simulationId   String
+  name           String
+  status         String
+  pagesPerMinute Float
+  supportsColor  Boolean
+  supportsDuplex Boolean
+  activeJobId    String?
+  version        Int
+  simulation     Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@unique([simulationId, name])
+}
+
+model DomainEvent {
+  id               String     @id @default(uuid())
+  simulationId     String
+  stateVersion     Int
+  eventIndex       Int
+  type             String
+  simulationTimeMs Int
+  correlationId    String?
+  payload          Json
+  createdAt        DateTime   @default(now())
+  simulation       Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@unique([simulationId, stateVersion, eventIndex])
+  @@index([simulationId, createdAt])
+}
+
+model AuditEntry {
+  id                 String     @id @default(uuid())
+  simulationId       String
+  actorKind           String
+  actorId             String
+  commandType         String
+  correlationId      String
+  stateVersionBefore Int
+  stateVersionAfter  Int
+  outcome             String
+  reasonCode          String?
+  redactedParameters Json
+  durationMs          Float
+  occurredAt          DateTime   @default(now())
+  simulation          Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@index([simulationId, occurredAt])
+  @@index([correlationId])
+}
+
+model IdempotencyKey {
+  id           String     @id @default(uuid())
+  simulationId String
+  actorId      String
+  routeKey     String
+  key          String
+  requestHash  String
+  statusCode   Int
+  response     Json
+  createdAt    DateTime   @default(now())
+  expiresAt    DateTime
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@unique([actorId, routeKey, key])
+  @@index([expiresAt])
+}
+
+model Snapshot {
+  id           String     @id @default(uuid())
+  simulationId String
+  stateVersion Int
+  state        Json
+  createdAt    DateTime   @default(now())
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@unique([simulationId, stateVersion])
+  @@index([simulationId, createdAt])
+}
+
+model BenchmarkRun {
+  id           String     @id @default(uuid())
+  simulationId String
+  workloadHash String
+  status       String
+  request      Json
+  result       Json?
+  createdAt    DateTime   @default(now())
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@index([simulationId, createdAt])
+  @@index([workloadHash])
+}
+
+model OutboxEntry {
+  id           String     @id @default(uuid())
+  simulationId String
+  eventId      String     @unique
+  payload      Json
+  createdAt    DateTime   @default(now())
+  deliveredAt  DateTime?
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+
+  @@index([simulationId, deliveredAt, createdAt])
+}
