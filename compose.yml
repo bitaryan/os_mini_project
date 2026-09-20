@@ -1,0 +1,58 @@
+services:
+  api:
+    build:
+      context: .
+      target: api
+      args:
+        VERSION: ${VERSION:-dev}
+        REVISION: ${REVISION:-unknown}
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_ORIGIN: http://localhost:3000
+      DATABASE_URL: file:/data/printer.db
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET to at least 32 characters}
+      LOG_LEVEL: info
+      ENABLE_FAULT_INJECTION: 'true'
+      AUTH_MODE: local
+      TRUST_PROXY: 'false'
+    ports:
+      - '4000:4000'
+    volumes:
+      - printer-data:/data
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4000/health/ready').then(r=>{if(!r.ok)process.exit(1)})",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        VERSION: ${VERSION:-dev}
+        REVISION: ${REVISION:-unknown}
+        API_INTERNAL_URL: http://api:4000
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+        NEXT_PUBLIC_SOCKET_URL: http://localhost:4000
+        NEXT_PUBLIC_APP_ENV: production
+    environment:
+      API_INTERNAL_URL: http://api:4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:4000
+      NEXT_PUBLIC_APP_ENV: production
+    ports:
+      - '3000:3000'
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  printer-data:

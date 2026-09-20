@@ -1,4 +1,4 @@
-name: Week 1 quality gates
+name: Release quality gates
 
 on:
   push:
