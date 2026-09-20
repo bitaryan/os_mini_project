@@ -2,10 +2,12 @@ import { defineConfig, devices } from '@playwright/test';
 
 const webOrigin = 'http://127.0.0.1:3100';
 const apiOrigin = 'http://127.0.0.1:4100';
+const databaseUrl = `file:./data/e2e-${process.pid}.db`;
 
 export default defineConfig({
   testDir: './tests/e2e',
-  fullyParallel: true,
+  // Both viewport projects intentionally exercise the same persisted simulation.
+  workers: 1,
   forbidOnly: !!process.env['CI'],
   retries: 0,
   reporter: 'list',
@@ -30,15 +32,17 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm --filter @printer/api start',
+      command:
+        'pnpm --filter @printer/api db:migrate && pnpm --filter @printer/api start',
       url: `${apiOrigin}/health/live`,
       env: {
         NODE_ENV: 'test',
         PORT: '4100',
         WEB_ORIGIN: webOrigin,
-        DATABASE_URL: 'file:./data/test.db',
+        DATABASE_URL: databaseUrl,
         SESSION_SECRET: 'test-only-value-not-a-real-secret-0000',
         LOG_LEVEL: 'silent',
+        ENABLE_FAULT_INJECTION: 'true',
       },
       reuseExistingServer: false,
     },
